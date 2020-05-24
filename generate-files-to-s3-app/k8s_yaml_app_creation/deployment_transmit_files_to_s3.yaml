@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-gen-app
+  labels:
+    app: file-generator
+    role: s3-uploader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: file-generator
+      role: s3-uploader
+  template:
+    metadata:
+      labels:
+        app: file-generator
+        role: s3-uploader
+    spec:
+      # args are 3 as in the app usage help.
+      containers:
+      - name: file-gen-app
+        image: samer1984/generate-files-to-s3:latest
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-configure
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-configure
+              key: AWS_SECRET_ACCESS_KEY
+        - name: bucket_name
+          value: "samh-s3-bucket"
+        - name: filename
+          value: "samh-files-produced"
+        - name: s3-dir-storage
+          value: "data"
+        - name: MaxlinesInFile
+          value: "20"
+        - name: MaxwordsInLine
+          value: "4"
+        command: ["python", "main.py"]
+        args: ["-b", "$(bucket_name)", "-f", "$(filename)", "-d", "$(s3-dir-storage)" , "-l", "$(MaxlinesInFile)", "-w", "$(MaxwordsInLine)"]
+      restartPolicy: Always

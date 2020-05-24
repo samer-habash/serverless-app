@@ -1,0 +1,7 @@
+**/*pyc
+**/*__*__
+.idea/
+venv/
+.git/
+.gitignore
+
