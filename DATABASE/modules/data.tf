@@ -19,3 +19,7 @@ data "aws_security_group" "default" {
 data "aws_security_group" "rds-sg" {
   id = aws_security_group.rds_sg.id
 }
+
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}

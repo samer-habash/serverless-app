@@ -12,7 +12,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 try:
-    conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=60)
+    conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=30)
     with conn.cursor() as cur:
         cur.execute("CREATE TABLE IF NOT EXISTS LinesCount ( \
                     id INT NOT NULL AUTO_INCREMENT, \

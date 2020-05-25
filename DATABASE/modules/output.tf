@@ -13,3 +13,20 @@ output "subnet1" {
 output "subnet2" {
   value = data.aws_subnet.rds_subnet_id_2.vpc_id
 }
+
+// For connecting lambda to rds
+output "rds-instance-resourceId" {
+  value = aws_db_instance.rds_instance.resource_id
+}
+
+output "aws_account_id" {
+  value = data.aws_caller_identity.current.account_id
+}
+
+output "current-region" {
+  value = data.aws_region.current.name
+}
+
+output "rds-dbname" {
+  value = module.global_vars.rds_project_dbuser
+}

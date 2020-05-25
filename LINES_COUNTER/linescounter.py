@@ -6,6 +6,7 @@ import random
 import logging
 import pymysql
 
+
 def aws_secret_manager_get_secret_value(secret_name, secret_string, key_entry):
     client = boto3.client('secretsmanager')
     response = client.get_secret_value(SecretId=secret_name)
@@ -52,10 +53,11 @@ def lambda_handler(event, context):
     obj = s3.get_object(Bucket=bucket_name, Key=key_name)
     body_len = len(obj['Body'].read().decode('utf-8').split("\n"))
     try:
-        conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=60)
+        conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=30)
         with conn.cursor() as cur:
+            id = id_generator()
             cur.execute("INSERT INTO LinesCount(id, ObjectPath, AmountOfLines) \
-                        values(%s, %s, %s) % (id_generator(), obj, body_len)")
+                        values(%s, %s, %s) % (id, obj, body_len)")
             conn.commit()
     except pymysql.MySQLError as e:
         logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
