@@ -52,8 +52,8 @@ def rds_info(rds_name):
 
 
 """
-Direct method through boto3 :
-This method below didn't work for the following reasons: 
+For a method Direct method through boto3 and client rds-data :
+Above method didn't work for the following reasons:  (make through pymsql)
 
     We need to create first aws secret manager, then these below functions will grab the data in the rds instance ,
     and applt sql commands to it.

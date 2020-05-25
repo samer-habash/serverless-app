@@ -27,6 +27,6 @@ output "current-region" {
   value = data.aws_region.current.name
 }
 
-output "rds-dbname" {
+output "rds-dbuser" {
   value = module.global_vars.rds_project_dbuser
 }

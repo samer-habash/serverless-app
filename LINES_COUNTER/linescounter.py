@@ -46,7 +46,7 @@ def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     s3 = boto3.client('s3')
     bucket_name = str(event["Records"][0]["s3"]["bucket"]["name"])
     key_name = str(event["Records"][0]["s3"]["object"]["key"])
@@ -55,9 +55,10 @@ def lambda_handler(event, context):
     try:
         conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=30)
         with conn.cursor() as cur:
-            id = id_generator()
-            cur.execute("INSERT INTO LinesCount(id, ObjectPath, AmountOfLines) \
-                        values(%s, %s, %s) % (id, obj, body_len)")
+            generate_id = id_generator()
+            sql = "INSERT INTO LinesCount (id, ObjectPath, AmountOfLines) VALUES (%s, %s, %s)"
+            values = (generate_id, obj, body_len)
+            cur.execute(sql, values)
             conn.commit()
     except pymysql.MySQLError as e:
         logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")

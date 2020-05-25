@@ -22,7 +22,14 @@ resource "aws_iam_role_policy_attachment" "basic_lambda" {
   role       = aws_iam_role.iam_for_lambda.name
 }
 
-resource "aws_iam_role_policy" "Allow_S3" {
+resource "aws_iam_role_policy" "Allow_S3_KMS" {
+  name = "lambda-Allow-S3-with-KMS"
+  /* For resource kms to get its ARN for all keys :
+  "arn:aws:kms:"${module.rds.current-region}":"${module.rds.aws_account_id}":key/*",
+  OR :
+  Individually as below :
+  "${data.aws_kms_alias.kms-get-id.arn}"
+  */
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -30,7 +37,10 @@ resource "aws_iam_role_policy" "Allow_S3" {
     {
       "Sid": "BucketAccess",
       "Effect": "Allow",
-      "Action": "s3:ListBucket",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
       "Resource": [
         "${data.aws_s3_bucket.s3-bucket.arn}/*"
       ]
@@ -52,6 +62,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "Allow_read_secretManager" {
+  name = "lambda-Allow-secretManager"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -73,7 +84,6 @@ resource "aws_iam_role_policy" "Allow_read_secretManager" {
       "Sid": "VisualEditor1",
       "Effect": "Allow",
       "Action": [
-        "secretsmanager:GetRandomPassword",
         "secretsmanager:ListSecrets"
       ],
       "Resource": "*"
@@ -88,6 +98,9 @@ EOF
 //"arn:aws:rds-db:<region>:<account_id>:dbuser:<rds-resource-id>/<dbuser>"
 // if the last word <dbuser> is start that means for all users in database rds
 resource "aws_iam_role_policy" "authenticate-connect-rds" {
+  name = "lambda-Allow-auth-rds"
+  //"arn:aws:rds-db:us-east-1:399728276788:dbuser:db-57JJX2KLGYXSPXZMRJIMYIABC4/sam"
+  //"arn:aws:rds-db:${module.rds.current-region}:&${module.rds.aws_account_id}:dbuser:&${module.rds.rds-instance-resourceId}/&${module.rds.rds-dbuser}""
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -98,7 +111,7 @@ resource "aws_iam_role_policy" "authenticate-connect-rds" {
                 "rds-db:connect"
             ],
             "Resource": [
-                "arn:aws:rds-db:"${module.rds.current-region}":"${module.rds.aws_account_id}":dbuser:"${module.rds.rds-instance-resourceId}"/"${module.rds.rds-dbname}"
+              "arn:aws:rds-db:us-east-1:399728276788:dbuser:db-57JJX2KLGYXSPXZMRJIMYIABC4/sam"
             ]
         }
     ]
@@ -108,6 +121,7 @@ EOF
 }
 
 resource "aws_iam_role_policy" "allow-list-rds-instances" {
+  name = "lambda-Allow-list-rds"
   policy = <<EOF
 {
     "Version": "2012-10-17",

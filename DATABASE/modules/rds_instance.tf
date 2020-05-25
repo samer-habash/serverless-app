@@ -27,6 +27,6 @@ resource "aws_db_instance" "rds_instance" {
   publicly_accessible = true
   // Ignore recreation of rds password everytime I run the terraform .
   lifecycle {
-    ignore_changes = [password]
+    ignore_changes = [password, db_subnet_group_name]
   }
 }
