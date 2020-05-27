@@ -42,29 +42,33 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+def id_generator():
+    # id columns in mysql is INT signed which has the maximum of 2147483648
+    value = random.randint(0, 2147483648)
+    return value
 
 
 def handler(event, context):
     s3 = boto3.client('s3')
-    bucket_name = str(event["Records"][0]["s3"]["bucket"]["name"])
-    key_name = str(event["Records"][0]["s3"]["object"]["key"])
+    s3_resource = boto3.resource('s3')
+    bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+    key_name = event["Records"][0]["s3"]["object"]["key"]
     obj = s3.get_object(Bucket=bucket_name, Key=key_name)
     body_len = len(obj['Body'].read().decode('utf-8').split("\n"))
+    size = event["Records"][0]["s3"]["object"]["size"]
+
+    # Connecting to Mysql with open connection :
+    conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=30)
     try:
-        conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=30)
-        with conn.cursor() as cur:
-            generate_id = id_generator()
-            sql = "INSERT INTO LinesCount (id, ObjectPath, AmountOfLines) VALUES (%s, %s, %s)"
-            values = (generate_id, obj, body_len)
-            cur.execute(sql, values)
-            conn.commit()
+        cur = conn.cursor()
+        sql = cur.execute("""INSERT INTO LinesCount (id, ObjectPath, AmountOfLines) VALUES ("%s", "%s", "%s")""" % (id, key_name, body_len))
+        conn.commit()
     except pymysql.MySQLError as e:
+        print(e)
         logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
         logger.error(e)
-        sys.exit(1)
+        sys.exit()
     return {
         'statusCode': 200,
-        'body': json.dumps('S3 succesfully Calculated and inserted in RDS!')
+        'body': json.dumps('S3 file lines successfully calculated and the calculations were inserted in RDS!')
     }

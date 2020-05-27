@@ -3,6 +3,7 @@ import logging
 import extract_rds_info
 import pymysql
 
+
 rds_host = extract_rds_info.rds_info('generic-mysql-instances')['db_address']
 name = extract_rds_info.rds_info('generic-mysql-instances')['db_user']
 password = extract_rds_info.aws_secret_manager_get_secret_value('rds-credentials', 'SecretString', 'password')

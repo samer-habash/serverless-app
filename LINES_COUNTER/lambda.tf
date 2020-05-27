@@ -1,16 +1,14 @@
 resource "aws_lambda_function" "lambda-LinesCount" {
-  filename = "linescounter.zip"
-  function_name = "LinesCount"
+  filename = local.lambda.filename
+  function_name = local.lambda.function_name
   // The filename.handler-method value in your function. For example, "main.handler" calls the handler method defined in main.py.
-  handler = "linescounter.handler"
+  handler = local.lambda.handler
   // role = aws_iam_role.iam_for_lambda.arn
   role = aws_iam_role.iam_for_lambda.arn
-  runtime = "python3.6"
+  runtime = local.lambda.runtime
   source_code_hash = filebase64sha256("linescounter.zip")
-  /*vpc_config {
-    security_group_ids = [module.rds.default-sg, module.rds.rds-sg]
-    subnet_ids = [module.rds.subnet1, module.rds.subnet2]
-  }*/
+  // Samer as mysql connection timeout
+  timeout = local.lambda.lambda_timeout_in_seconds
 }
 
 resource "aws_lambda_permission" "allow_bucket_lambda" {

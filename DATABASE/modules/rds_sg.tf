@@ -1,8 +1,12 @@
 resource "aws_security_group" "rds_sg" {
   name = join("-", [module.global_vars.rds_project_name_vars, "sg"])
   vpc_id = data.aws_vpc.default.id
+    lifecycle {
+    prevent_destroy = true
+  }
 }
 
+// This will allow lambda and everyone access to rds
 resource "aws_security_group_rule" "ingress_allow_all_rds" {
   security_group_id = aws_security_group.rds_sg.id
   from_port         = 0

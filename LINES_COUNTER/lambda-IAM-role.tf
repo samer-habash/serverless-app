@@ -22,8 +22,17 @@ resource "aws_iam_role_policy_attachment" "basic_lambda" {
   role       = aws_iam_role.iam_for_lambda.name
 }
 
-resource "aws_iam_role_policy" "Allow_S3_KMS" {
-  name = "lambda-Allow-S3-with-KMS"
+
+//For  lambda access permissions on AWS resources we need access to VPC :
+// Then we should can assign vpc, 2 subnet regions to this lambda (aws lets you choose 2 subnets at minimum for redunduncy)
+//resource "aws_iam_role_policy_attachment" "lambda_access_aws_resources" {
+//  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+//  role       = aws_iam_role.iam_for_lambda.name
+//}
+
+
+resource "aws_iam_role_policy" "Allow_S3" {
+  name = "lambda-Allow-S3"
   /* For resource kms to get its ARN for all keys :
   "arn:aws:kms:"${module.rds.current-region}":"${module.rds.aws_account_id}":key/*",
   OR :
@@ -32,37 +41,26 @@ resource "aws_iam_role_policy" "Allow_S3_KMS" {
   */
   policy = <<EOF
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "BucketAccess",
-      "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetBucketLocation"
-      ],
-      "Resource": [
-        "${data.aws_s3_bucket.s3-bucket.arn}/*"
-      ]
-    },
-    {
-      "Sid": "BucketContentsAccess",
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Resource": [
-        "${data.aws_s3_bucket.s3-bucket.arn}/*"
-      ]
-    }
-  ]
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:Get*",
+                "s3:List*"
+            ],
+            "Resource": [
+              "*"
+            ]
+        }
+    ]
 }
 EOF
   role   = aws_iam_role.iam_for_lambda.id
 }
 
 resource "aws_iam_role_policy" "Allow_read_secretManager" {
-  name = "lambda-Allow-secretManager"
+  name = "lambda-Allow_read_secretManager"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -71,22 +69,12 @@ resource "aws_iam_role_policy" "Allow_read_secretManager" {
       "Sid": "VisualEditor0",
       "Effect": "Allow",
       "Action": [
-        "secretsmanager:GetResourcePolicy",
         "secretsmanager:GetSecretValue",
-        "secretsmanager:DescribeSecret",
-        "secretsmanager:ListSecretVersionIds"
+        "secretsmanager:DescribeSecret"
       ],
       "Resource": [
-        "${data.aws_secretsmanager_secret.rds_creds.arn}"
+        "${module.rds.aws_secret_manager_arn}"
       ]
-    },
-    {
-      "Sid": "VisualEditor1",
-      "Effect": "Allow",
-      "Action": [
-        "secretsmanager:ListSecrets"
-      ],
-      "Resource": "*"
     }
   ]
 }
@@ -94,13 +82,17 @@ EOF
     role   = aws_iam_role.iam_for_lambda.id
 }
 
-// Info on authenticate-connection-rds
-//"arn:aws:rds-db:<region>:<account_id>:dbuser:<rds-resource-id>/<dbuser>"
-// if the last word <dbuser> is start that means for all users in database rds
+/*   No need after opening security group rds
+   Info on authenticate-connection-rds
+  "arn:aws:rds-db:<region>:<account_id>:dbuser:<rds-resource-id>/<dbuser>"
+   if the last word <dbuser> is start that means for all users in database rds
+*/
+// This can be ignore because we will open the CID 0.0.0.0/0 in rds-sg
+// But it is more organized to do so.
 resource "aws_iam_role_policy" "authenticate-connect-rds" {
   name = "lambda-Allow-auth-rds"
-  //"arn:aws:rds-db:us-east-1:399728276788:dbuser:db-57JJX2KLGYXSPXZMRJIMYIABC4/sam"
-  //"arn:aws:rds-db:${module.rds.current-region}:&${module.rds.aws_account_id}:dbuser:&${module.rds.rds-instance-resourceId}/&${module.rds.rds-dbuser}""
+  // Format :
+  //"arn:aws:rds-db:${region}:${account-id}:dbuser:${rds-resource-id}/${rds-dbuser}"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -111,7 +103,7 @@ resource "aws_iam_role_policy" "authenticate-connect-rds" {
                 "rds-db:connect"
             ],
             "Resource": [
-              "arn:aws:rds-db:us-east-1:399728276788:dbuser:db-57JJX2KLGYXSPXZMRJIMYIABC4/sam"
+              "arn:aws:rds-db:${module.rds.current-region}:${module.rds.aws_account_id}:dbuser:${module.rds.aws_db_resource_id}/${module.rds.rds-dbuser}"
             ]
         }
     ]
@@ -119,6 +111,7 @@ resource "aws_iam_role_policy" "authenticate-connect-rds" {
 EOF
   role = aws_iam_role.iam_for_lambda.id
 }
+
 
 resource "aws_iam_role_policy" "allow-list-rds-instances" {
   name = "lambda-Allow-list-rds"
@@ -129,7 +122,7 @@ resource "aws_iam_role_policy" "allow-list-rds-instances" {
         {
             "Sid": "VisualEditor0",
             "Effect": "Allow",
-            "Action": "rds:DescribeDBInstances",
+            "Action": "rds:Describe*",
             "Resource": "*"
         }
     ]
