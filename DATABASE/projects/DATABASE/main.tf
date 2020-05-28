@@ -1,7 +1,11 @@
-provider "aws" {
-  region = "us-east-1"
+module "global_vars" {
+  source = "../global-variables"
 }
 
 module "rds_DATABASE" {
   source = "../../modules"
+}
+
+provider "aws" {
+  region = module.global_vars.rds_region
 }

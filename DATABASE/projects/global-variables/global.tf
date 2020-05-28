@@ -3,6 +3,7 @@
 locals {
   project_name = {
     rds = {
+      region = "us-east-1"
       enviornment = "dev"
       name = "rds"
       dbname = "lambdalines"
@@ -21,6 +22,11 @@ locals {
       instance_class = "db.t2.micro"
       parameter_group_name = "default.mysql5.7"
     }
-    // For another projects , etc ...
+    aws_rds_secret_manager = {
+      name = "rds-cred"
+    }
+
+  // For another projects , etc ...
+
   }
 }

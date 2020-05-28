@@ -6,7 +6,7 @@
 
 resource "aws_secretsmanager_secret" "create-secret-manager" {
   depends_on = [aws_db_instance.rds_instance]
-  name = "rds-credential"
+  name = module.global_vars.rds_secret_manager_name
 }
 
 resource "aws_secretsmanager_secret_version" "create-rds-creds" {

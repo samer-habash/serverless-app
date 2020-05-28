@@ -4,7 +4,7 @@ resource "aws_db_subnet_group" "rds_subnet" {
   tags = {
     Name = "RDS Subnet group us-east-1a/b"
   }
-  lifecycle {
-    prevent_destroy = true
-  }
+  //  lifecycle {
+  //    prevent_destroy = true
+  //  }
 }

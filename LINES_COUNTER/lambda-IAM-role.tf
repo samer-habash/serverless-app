@@ -73,7 +73,7 @@ resource "aws_iam_role_policy" "Allow_read_secretManager" {
         "secretsmanager:DescribeSecret"
       ],
       "Resource": [
-        "${module.rds.aws_secret_manager_arn}"
+        "${data.aws_db_instance.rds-usage-after-creation.db_instance_arn}"
       ]
     }
   ]
@@ -103,7 +103,7 @@ resource "aws_iam_role_policy" "authenticate-connect-rds" {
                 "rds-db:connect"
             ],
             "Resource": [
-              "arn:aws:rds-db:${module.rds.current-region}:${module.rds.aws_account_id}:dbuser:${module.rds.aws_db_resource_id}/${module.rds.rds-dbuser}"
+              "arn:aws:rds-db:${module.rds_global_vars.rds_region}:${data.aws_caller_identity.current.account_id}:dbuser:${data.aws_db_instance.rds-usage-after-creation.resource_id}/${module.rds_global_vars.rds_project_dbuser}"
             ]
         }
     ]

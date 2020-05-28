@@ -1,3 +1,3 @@
 provider "aws" {
-  region = "us-east-1"
+  region = module.rds_global_vars.rds_region
 }
