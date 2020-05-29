@@ -1,5 +1,5 @@
 
-- This openfaas function Gets the last modified object in the S3 bucket and return its word length and content. 
+- This Directory "WORDS_COUNTER" is an openfaas function that gets the last modified object in the S3 bucket and return its word length and content. 
 
 create your secret , such as aws credentials in the namespace : openfaas-fn (otherwise it will not catch it)
 e.g. :
