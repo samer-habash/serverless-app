@@ -27,7 +27,7 @@ def aws_secret_manager_get_secret_value(secret_name, secret_string, key_entry):
     return key_entry_value
 
 
-#aws_secret_manager_get_secret_value('rds-credentials', 'SecretString', 'password')
+#aws_secret_manager_get_secret_value('rds-cred', 'SecretString', 'password')
 #aws_secret_manager_get_secret_value('rds-credentials', 'SecretString', 'username')
 # print the response to get the full keys.
 

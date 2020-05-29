@@ -4,9 +4,14 @@ import extract_rds_info
 import pymysql
 
 
+"""
+Note the name of the rds and aws secret manager is hardcoded , and the program will grab the secret value, 
+    and the relevant parameters to connect.
+"""
+
 rds_host = extract_rds_info.rds_info('generic-mysql-instances')['db_address']
 name = extract_rds_info.rds_info('generic-mysql-instances')['db_user']
-password = extract_rds_info.aws_secret_manager_get_secret_value('rds-credentials', 'SecretString', 'password')
+password = extract_rds_info.aws_secret_manager_get_secret_value('rds-cred', 'SecretString', 'password')
 db_name = extract_rds_info.rds_info('generic-mysql-instances')['db_name']
 
 logger = logging.getLogger()

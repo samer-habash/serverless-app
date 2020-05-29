@@ -1,11 +1,14 @@
 import boto3
 import json
-import string
 import sys
 import random
 import logging
 import pymysql
 
+"""
+Note the name of the rds and aws secret manager is hardcoded , and the program will grab the secret value, 
+    and the relevant parameters to connect.
+"""
 
 def aws_secret_manager_get_secret_value(secret_name, secret_string, key_entry):
     client = boto3.client('secretsmanager')
@@ -36,7 +39,7 @@ def rds_info(rds_name):
 
 rds_host = rds_info('generic-mysql-instances')['db_address']
 name = rds_info('generic-mysql-instances')['db_user']
-password = aws_secret_manager_get_secret_value('rds-credentials', 'SecretString', 'password')
+password = aws_secret_manager_get_secret_value('rds-cred', 'SecretString', 'password')
 db_name = rds_info('generic-mysql-instances')['db_name']
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -54,6 +57,7 @@ def handler(event, context):
     bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
     key_name = event["Records"][0]["s3"]["object"]["key"]
     obj = s3.get_object(Bucket=bucket_name, Key=key_name)
+    obj_path = "S3://" + bucket_name + "/" + key_name
     body_len = len(obj['Body'].read().decode('utf-8').split("\n"))
     size = event["Records"][0]["s3"]["object"]["size"]
 
@@ -61,7 +65,7 @@ def handler(event, context):
     conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=30)
     try:
         cur = conn.cursor()
-        sql = cur.execute("""INSERT INTO LinesCount (id, ObjectPath, AmountOfLines) VALUES ("%s", "%s", "%s")""" % (id, key_name, body_len))
+        sql = cur.execute("""INSERT INTO LinesCount (id, ObjectPath, AmountOfLines) VALUES ("%s", "%s", "%s")""" % (id_generator(), obj_path, body_len))
         conn.commit()
     except pymysql.MySQLError as e:
         print(e)
@@ -70,5 +74,5 @@ def handler(event, context):
         sys.exit()
     return {
         'statusCode': 200,
-        'body': json.dumps('S3 file lines successfully calculated and the calculations were inserted in RDS!')
+        'body': json.dumps('S3 file lines successfully calculated and the calculations :  LinesCount : %s were inserted in RDS!' % body_len)
     }

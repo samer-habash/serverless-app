@@ -8,3 +8,5 @@ data "aws_db_instance" "rds-usage-after-creation" { db_instance_identifier = mod
 data "aws_secretsmanager_secret" "aws-secret-after-creation" { name = module.rds_global_vars.rds_secret_manager_name }
 data "aws_caller_identity" "current" {}
 
+// Adding inbound rule rds-sg to let lambda connects (using the name of the rds-sg)
+data "aws_security_group" "rds-sg" { name = "dev-rds-sg"}

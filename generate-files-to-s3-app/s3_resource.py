@@ -40,22 +40,12 @@ def check_uploaded_file_size(bucket_name, key):
 
 
 def get_s3_object_contents(bucket_name, key_name):
-    # session = boto3.Session()
-    # s3_client = session.client("s3")
-    # file = BytesIO()
-
-    # content = str(f.getvalue())
-    # body_len = len(content.split("\n"))
-    # print(body_len)
-    # print(content)
-
     s3_resource = boto3.resource('s3')
     bucket = s3_resource.Bucket(bucket_name)
     for obj in bucket.objects.all():
         if key_name in obj.key:
             body = obj.get()['Body'].read().decode('utf-8')
             body_len = len(body.split("\n"))
-            print(body_len)
             return body_len
 
 

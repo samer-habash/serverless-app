@@ -73,7 +73,7 @@ resource "aws_iam_role_policy" "Allow_read_secretManager" {
         "secretsmanager:DescribeSecret"
       ],
       "Resource": [
-        "${data.aws_db_instance.rds-usage-after-creation.db_instance_arn}"
+        "${data.aws_secretsmanager_secret.aws-secret-after-creation.arn}"
       ]
     }
   ]

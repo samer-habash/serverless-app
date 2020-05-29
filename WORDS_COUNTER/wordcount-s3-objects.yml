@@ -1,0 +1,17 @@
+version: 1.0
+provider:
+  name: openfaas
+  gateway: http://10.97.39.41:8080
+functions:
+  wordcount-s3-objects:
+    lang: python
+    handler: ./wordcount-s3-objects
+    image: samer1984/words-count-s3:latest
+    imagePullPolicy: IfNotPresent
+    environment:
+      AWS_ACCESS_KEY_ID: my-secret-aws
+      AWS_SECRET_ACCESS_KEY: my-secret-access-aws
+      # Enter your preferred region
+      AWS_DEFAULT_REGION: us-east-1
+      Content-Type: text/plain
+      write_debug: "true"
