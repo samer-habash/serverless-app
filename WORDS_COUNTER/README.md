@@ -44,3 +44,5 @@ since openfaas does not actually support valueFrom secrets , then I did a small 
 
 --> You can restart the deployment if you wish , by default the pods will reconsider it :
     e.g. ~ kubectl rollout restart deployment -n openfaas-fn wordcount-s3-objects
+
+NOTE: the Dockerfile-openfaas must have the build directory to re-build it , I did not make any changes in index.py from openfaas community.
