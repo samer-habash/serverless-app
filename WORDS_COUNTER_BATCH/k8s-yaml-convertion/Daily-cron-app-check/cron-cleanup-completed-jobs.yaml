@@ -5,7 +5,7 @@ metadata:
   labels:
     role: clean_daily_completed_jobs
 spec:
-  schedule: "* * * * *"
+  schedule: "0 1 * * *"
   successfulJobsHistoryLimit: 0
   failedJobsHistoryLimit: 0
   jobTemplate:

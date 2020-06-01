@@ -5,7 +5,7 @@ metadata:
   labels:
     app: words-count-s3-objects
 spec:
-  schedule: "* * * * *"
+  schedule: "0 0 * * *"
   jobTemplate:
     spec:
       template:
