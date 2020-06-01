@@ -1,1 +1,3 @@
 pymysql==0.9.3
+boto3==1.13.19
+botocore==1.16.19

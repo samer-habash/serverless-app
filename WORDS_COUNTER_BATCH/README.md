@@ -17,10 +17,9 @@ The python code as  do the following :
 ### Checklist :
 
    - [x] Python Code
-   - [ ] Dockerfile
+   - [x] Dockerfile
+   - [x] k8s YAMLs
    - [ ] helm chart
-   - [ ] Deploy to k8s
-   - [ ] QA
 
 
     The code is finished and working, it is still under development to package it as an app in help and deploy it in kubernetes.

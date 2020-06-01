@@ -47,7 +47,7 @@ def rds_info(rds_name):
     return False
 
 
-#print(rds_info('generic-mysql-instances')['db_arn'])
+print(rds_info('generic-mysql-instances')['db_arn'])
 # print the response to get the full keys.
 
 

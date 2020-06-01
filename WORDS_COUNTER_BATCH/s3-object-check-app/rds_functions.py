@@ -12,6 +12,9 @@ def aws_secret_manager_get_secret_value(secret_name, secret_string, key_entry):
     return key_entry_value
 
 
+#print(aws_secret_manager_get_secret_value('rds-cred', 'SecretString', 'password'))
+
+
 def rds_info(rds_name):
     client = boto3.client('rds')
     response = client.describe_db_instances()

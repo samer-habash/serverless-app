@@ -1,0 +1,7 @@
+rds:
+    name: generic-mysql-instances
+    awsSecretmanagerName: rds-cred
+
+openfaas:
+    url: http://10.97.39.41:8080
+    functionName: wordcount-s3-objects

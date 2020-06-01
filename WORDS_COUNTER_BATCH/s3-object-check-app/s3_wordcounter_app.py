@@ -1,15 +1,26 @@
-#!/usr/bin/env python3
-
+import os
+import sys
+import logging
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
+
 import boto3
-import sys
-import requests
-import os
-import logging
+from botocore.exceptions import ClientError
 import pymysql
+import requests
 # path = sys.path.append('../dir')
-from config import rds_host, name, password, db_name
+from config import *
+
+
+def check_existence_bucket_name(bucket_name):
+    try:
+        s3_resource = boto3.resource('s3')
+        if s3_resource.Bucket(bucket_name) in s3_resource.buckets.all():
+            return True
+        else:
+            return "Bucket Does not Exist!"
+    except ClientError as e:
+        return "ClientError!", "reason : ", e
 
 
 def download_s3_object(bucket_name, object_name, file_name):
@@ -20,7 +31,7 @@ def download_s3_object(bucket_name, object_name, file_name):
 
 def response_from_openfaas(bucket_name, object_name):
     # Put here your openfaas external gateway IP
-    url = 'http://10.97.39.41:8080/function/wordcount-s3-objects'
+    url = openfaas_url + '/function/' + openfaas_function
     data = bucket_name + "/" + object_name
     return requests.post(url, data=data).text
 
@@ -40,14 +51,16 @@ def send_wordscount_to_rds(path, num_of_words):
         logger.error("ERROR: Unexpected error: Could not connect to MySQL instance.")
         logger.error(e)
         sys.exit()
-
     logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
 
-if __name__ == '__main__':
+def handle(bucket_name):
+    aws_key = os.environ.get('AWS_ACCESS_KEY_ID')
+    aws_access_secret = os.environ.get('AWS_SECRET_ACCESS_KEY')
     region = os.environ.get('AWS_DEFAULT_REGION')
-    bucket = sys.argv[1]
-    s3_resource = boto3.resource('s3', region_name=region)
+    bucket = bucket_name
+    s3_resource = boto3.resource('s3', aws_access_key_id=aws_key, aws_secret_access_key=aws_access_secret,
+                                 region_name=region)
     s3_resource_bucket = s3_resource.Bucket(bucket)
     # removing first object since it is the directory with empty file
     for obj in list(s3_resource_bucket.objects.all())[1:]:

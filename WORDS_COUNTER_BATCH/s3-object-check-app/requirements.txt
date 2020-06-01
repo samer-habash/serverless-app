@@ -1,4 +1,5 @@
-boto3
-yaml
-pymysql
-requests
+boto3==1.13.19
+botocore==1.16.19
+pyyaml==5.3.1
+pymysql==0.9.3
+requests==2.23.0

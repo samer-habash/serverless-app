@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: s3-object-check
+  labels:
+    app: words-count-s3-objects
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: docker-private-creds
+          containers:
+          - name: s3-object-daily-check
+            image: localhost:32000/s3-objects-words-count-daily-check:latest
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-creds
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-creds
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            - name: bucket_name
+              value: "samh-s3-bucket"
+            command: ["python", "main.py"]
+            args: ["-b", "$(bucket_name)"]
+          restartPolicy: OnFailure

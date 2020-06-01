@@ -1,0 +1,26 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cleanup-jobs
+  labels:
+    role: clean_daily_completed_jobs
+spec:
+  schedule: "* * * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 0
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cleanup
+            image: samer1984/kubectl-fast-deploy-alpine
+            command: ["sh", "-c", "kubectl delete jobs --field-selector status.successful=1"]
+            volumeMounts:
+            - mountPath: /root/.kube
+              name: kubeconfig-vol
+          volumes:
+          - name: kubeconfig-vol
+            hostPath:
+              path: /home/sam/.kube-conf-to-mount
+          restartPolicy: OnFailure
