@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
 from datetime import datetime, timedelta
-from dateutil.tz import tzutc, UTC
+from dateutil.tz import tzutc
 import boto3
 import sys
 import requests
 import os
 import logging
 import pymysql
-
-path = sys.path.append('../LINES_COUNTER')
-from linescounter import rds_host, name, password, db_name
+# path = sys.path.append('../dir')
+from config import rds_host, name, password, db_name
 
 
 def download_s3_object(bucket_name, object_name, file_name):
@@ -20,6 +19,7 @@ def download_s3_object(bucket_name, object_name, file_name):
 
 
 def response_from_openfaas(bucket_name, object_name):
+    # Put here your openfaas external gateway IP
     url = 'http://10.97.39.41:8080/function/wordcount-s3-objects'
     data = bucket_name + "/" + object_name
     return requests.post(url, data=data).text

@@ -1,5 +1,4 @@
-module "rds_global_vars" {
-  source = "../DATABASE/projects/global-variables"
+module "rds_global_vars" { source = "../DATABASE/projects/global-variables"
 }
 
 // bucket name is pre-created form before

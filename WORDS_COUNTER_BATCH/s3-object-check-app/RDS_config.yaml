@@ -1,0 +1,3 @@
+rds:
+    name: generic-mysql-instances
+    awsSecretmanagerName: rds-cred

@@ -1,4 +1,10 @@
-- This directory is a to complete the word done from before with openfaas.
+- This directory is the full app process.
+- The app will do the following :
+   
+        a. s3 changes as Daily check basis (every 24 hour) :
+        b. Download the modifed/uploaded objects in s3
+        c. send the object to openfaas function in WORDS_COUNTER dir to claculate word length
+        d. send the result to rds  
 
 The python code as  do the following : 
 
@@ -7,6 +13,9 @@ The python code as  do the following :
         - Sending them to openfaas function wordscount-s3-objects from WORDS_COUNTER dir
         - Lastly it will send the result to AWS RDS .
 
-Example of Usage :
-    
-        e.g. python s3-object-cron.py bucket_name
+
+Checklist :
+
+    The code is finished and working, it is still under development to package it as an app in help and deploy it in kubernetes.
+        
+ 
