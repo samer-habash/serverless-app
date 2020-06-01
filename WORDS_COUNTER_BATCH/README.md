@@ -14,7 +14,14 @@ The python code as  do the following :
         - Lastly it will send the result to AWS RDS .
 
 
-Checklist :
+### Checklist :
+
+   - [x] Python Code
+   - [ ] Dockerfile
+   - [ ] helm chart
+   - [ ] Deploy to k8s
+   - [ ] QA
+
 
     The code is finished and working, it is still under development to package it as an app in help and deploy it in kubernetes.
         
