@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rds-datasource
+  namespace: default
+  labels:
+    grafana_datasource: '1'
+data:
+  datasource.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: RDS
+      type: mysql
+      url: rds-instance-endpoint-url
+      orgId: 1
+      database: lambdalines
+      user: your-rds-user
+      password: your-rds-pass
+      jsonData:
+        maxOpenConns: 100
+        maxIdleConns: 5
+        connMaxLifetime: 14400
+

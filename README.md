@@ -39,7 +39,7 @@ The Project will use : terraform, boto3,openfaas for building the serverless app
    - [x] LINES_COUNTER
    - [x] WORDS_COUNTER
    - [x] WORDS_COUNTER_BATCH
-   - [ ] VISUALIZATION_SERVICE
+   - [x] VISUALIZATION_SERVICE
    
                    
 
