@@ -1,0 +1,41 @@
+{{- if .Values.S3objectCron.enabled -}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "WORDS_COUNTER_BATCH.name" . }}
+  labels:
+    {{- include "WORDS_COUNTER_BATCH.labels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.S3objectCron.schedule.cron }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "WORDS_COUNTER_BATCH.selectorLabels" . | nindent 12 }}
+        spec:
+          imagePullSecrets:
+            - name: {{ .Values.S3objectCron.image.pullSecret }}
+          containers:
+          - name: {{ include "WORDS_COUNTER_BATCH.name" . }}
+            image: {{ .Values.S3objectCron.image.repository }}:{{ .Values.S3objectCron.image.tag }}
+            imagePullPolicy: {{ .Values.S3objectCron.image.pullPolicy }}
+            env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.S3objectCron.env.secretKeyRefName }}
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.S3objectCron.env.secretKeyRefName }}
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_DEFAULT_REGION
+              value: "{{ .Values.S3objectCron.env.region }}"
+            - name: bucket_name
+              value: "{{ .Values.S3objectCron.Bucket.name }}"
+            command: ["python", "main.py"]
+            args: ["-b", "$({{ .Values.S3objectCron.Bucket.name }})"]
+          restartPolicy: {{ .Values.S3objectCron.restartPolicy }}
+{{- end }}

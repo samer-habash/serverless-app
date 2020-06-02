@@ -19,9 +19,4 @@ The python code as  do the following :
    - [x] Python Code
    - [x] Dockerfile
    - [x] k8s YAMLs
-   - [ ] helm chart
-
-
-    The code is finished and working, it is still under development to package it as an app in help and deploy it in kubernetes.
-        
- 
+   - [x] helm chart

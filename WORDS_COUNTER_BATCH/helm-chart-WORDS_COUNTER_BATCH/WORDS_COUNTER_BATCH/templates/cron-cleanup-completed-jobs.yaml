@@ -1,0 +1,28 @@
+{{- if .Values.cleanup.enabled -}}
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "WORDS_COUNTER_BATCH.cleanup.name" . }}
+  labels:
+    {{- include "WORDS_COUNTER_BATCH.cleanup.selectorLabels" . | nindent 4 }}
+spec:
+  schedule: "{{ .Values.cleanup.schedule.cron }}"
+  successfulJobsHistoryLimit: {{ .Values.cleanup.schedule.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.cleanup.schedule.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: {{ include "WORDS_COUNTER_BATCH.cleanup.name" . }}
+            image: {{ .Values.cleanup.image.repository }}:{{ .Values.cleanup.image.tag }}
+            command: ["sh", "-c", "{{ .Values.cleanup.cleanCommand }}"]
+            volumeMounts:
+            - mountPath: /root/.kube
+              name: {{ include "WORDS_COUNTER_BATCH.cleanup.name" . }}-vol
+          volumes:
+          - name: {{ include "WORDS_COUNTER_BATCH.cleanup.name" . }}-vol
+            hostPath:
+              path: {{ .Values.cleanup.Volumes.HostPath }}
+          restartPolicy: {{ .Values.cleanup.restartPolicy }}
+{{- end }}

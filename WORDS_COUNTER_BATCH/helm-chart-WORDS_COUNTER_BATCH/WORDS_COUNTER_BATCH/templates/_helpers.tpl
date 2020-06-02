@@ -3,7 +3,14 @@
 Expand the name of the chart.
 */}}
 {{- define "WORDS_COUNTER_BATCH.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default "words-count" .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Expand the name of the chart.
+*/}}
+{{- define "WORDS_COUNTER_BATCH.cleanup.name" -}}
+{{- default "clean-jobs" .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -35,7 +42,6 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "WORDS_COUNTER_BATCH.labels" -}}
-helm.sh/chart: {{ include "WORDS_COUNTER_BATCH.chart" . }}
 {{ include "WORDS_COUNTER_BATCH.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -48,16 +54,11 @@ Selector labels
 */}}
 {{- define "WORDS_COUNTER_BATCH.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "WORDS_COUNTER_BATCH.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{/*
-Create the name of the service account to use
+cleanup Selector labels
 */}}
-{{- define "WORDS_COUNTER_BATCH.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "WORDS_COUNTER_BATCH.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
+{{- define "WORDS_COUNTER_BATCH.cleanup.selectorLabels" -}}
+role: {{ include "WORDS_COUNTER_BATCH.cleanup.name" . }}-completed
 {{- end -}}
