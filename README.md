@@ -40,7 +40,13 @@ The Project will use : terraform, boto3,openfaas for building the serverless app
    - [x] WORDS_COUNTER
    - [x] WORDS_COUNTER_BATCH
    - [x] VISUALIZATION_SERVICE
-   
+
+Upcoming additionals/features:
+  
+  - [ ] CI Jenkins Job Cycle
+  - [ ] CD Jenkins deploy Cycle
+  - [ ] Send the contents to Elastic search as a document
+  Will add another features, thinking what else can be added...
                    
 
 
