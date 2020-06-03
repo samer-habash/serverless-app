@@ -1,4 +1,5 @@
 - This directory is the full app process.
+
 - The app will do the following :
    
         a. s3 changes as Daily check basis (every 24 hour) :
@@ -12,6 +13,9 @@ The python code as  do the following :
         - Downloading them
         - Sending them to openfaas function wordscount-s3-objects from WORDS_COUNTER dir
         - Lastly it will send the result to AWS RDS .
+
+
+NOTE: Please check s3-object-check-app/app_config.yml which has the configuration of the rds name, openfaas url and db name .
 
 
 ### Checklist :
