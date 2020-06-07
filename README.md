@@ -41,7 +41,7 @@ The Project will use : terraform, boto3,openfaas for building the serverless app
    - [x] WORDS_COUNTER_BATCH
    - [x] VISUALIZATION_SERVICE
 
-Upcoming additionals/features:
+### Upcoming additionals/features:
   
   - [ ] CI Jenkins Job Cycle
   - [ ] CD Jenkins deploy Cycle
@@ -51,4 +51,9 @@ Upcoming additionals/features:
 
 
 
+### Imporovements:
 
+  
+  - [ ] Adding vault for grabbing secrets , instead of using k8s secrets.
+  - [ ] Load .sql file instead of hardocoded queries for RDS
+  - [ ] Reorganizing the steps of deployments for better clear setup 
