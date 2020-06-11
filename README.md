@@ -54,6 +54,6 @@ The Project will use : terraform, boto3,openfaas for building the serverless app
 ### Imporovements:
 
   
-  - [ ] Adding vault for grabbing secrets , instead of using k8s secrets.
+  - [ ] Adding vault for grabbing secrets OR Encrypting Secret Data at Rest inside etcd also, instead of using k8s secrets.
   - [ ] Load .sql file instead of hardocoded queries for RDS
   - [ ] Reorganizing the steps of deployments for better clear setup 
